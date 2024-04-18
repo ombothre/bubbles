@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bubble</title>
+  </head>
+  <body>
+    <div id="main">
+      <video id="vid" autoplay muted loop>
+        <source
+          src="https://res.cloudinary.com/duknzh3qe/video/upload/v1713430799/bubbles_gay3mm.mp4"
+        />
+      </video>
+      <div id="title">
+        <p class="heading">Bubbles</p>
+      </div>
+      <div id="panel">
+        <div id="ptop">
+          <div class="elem">
+            <p class="etext">Hit</p>
+            <div id="hit" class="box"></div>
+          </div>
+          <div class="elem">
+            <p class="etext">Timer</p>
+            <div id="timer" class="box"></div>
+          </div>
+          <div class="elem">
+            <p class="etext">Score</p>
+            <div id="score" class="box">0</div>
+          </div>
+        </div>
+        <div id="pbtm">
+          <!-- adding bubbles -->
+        </div>
+      </div>
+    </div>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Fuzzy+Bubbles:wght@400;700&display=swap");
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Fuzzy Bubbles";
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      #main {
+        position: relative;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+        flex-direction: column;
+        /* background-color: rgb(0, 191, 255); */
+      }
+
+      #vid {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        object-fit: cover;
+        z-index: -1;
+      }
+
+      #panel {
+        overflow: hidden;
+        width: 75%;
+        height: 75%;
+        border-radius: 10px;
+        background-color: white;
+      }
+
+      .heading {
+        color: white;
+        font-size: 40px;
+        font-weight: 600;
+      }
+
+      #ptop {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: rgb(0, 160, 255);
+        width: 100%;
+        padding: 10px;
+        align-items: center;
+        justify-content: space-around;
+      }
+
+      .elem {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+      }
+
+      .etext {
+        color: white;
+        margin: 10px;
+        font-size: 22px;
+        font-weight: 700;
+      }
+
+      .box {
+        background-color: white;
+        font-size: 20px;
+        font-weight: 600;
+        text-align: center;
+        padding: 10px;
+        margin: 10px;
+        width: 60px;
+        border-radius: 10px;
+      }
+
+      #pbtm {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+        width: 100%;
+        height: 85%;
+      }
+
+      .bubble {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 60px;
+        width: 60px;
+        margin: 12px 8px 10px 10px;
+        padding: 10px;
+        background-color: rgb(0, 160, 255);
+        color: white;
+        font-weight: 700;
+        border-radius: 50%;
+      }
+
+      .bubble:hover {
+        cursor: pointer;
+        background-color: rgb(0, 120, 255);
+      }
+
+      #play {
+        background-color: rgb(0, 160, 255);
+        font-size: 25px;
+        color: white;
+        padding: 15px;
+        border-radius: 10px;
+        border: none;
+      }
+
+      #play:hover {
+        cursor: pointer;
+        background-color: rgb(0, 120, 255);
+      }
+
+      button:active {
+        content: "";
+        background: rgb(255, 255, 255);
+        opacity: 0.2;
+        transition: all 1s;
+      }
+
+      @media screen and (max-width: 768px) {
+        .heading {
+          font-size: 32px; /* Decrease font size */
+        }
+        .etext {
+          font-size: 18px; /* Decrease font size */
+        }
+        .box {
+          font-size: 12px; /* Decrease font size */
+          width: 50px; /* Adjust width */
+          padding: 4px; /* Adjust padding */
+          margin: 4px; /* Adjust margin */
+        }
+        .bubble {
+          height: 35px; /* Adjust height */
+          width: 35px; /* Adjust width */
+          font-size: 12px; /* Decrease font size */
+          margin: 2px 2px 1px 1px; /* Adjust margin */
+        }
+        #ptop {
+          flex-direction: row; /* Adjust layout for smaller screens */
+          align-items: center; /* Center align items */
+        }
+        #pbtm {
+          flex-direction: row;
+          height: auto; /* Adjust height to auto */
+          padding: 10px; /* Adjust padding */
+        }
+      }
+    </style>
+
+    <script>
+      const makeBubbles = () => {
+        let bubbles = "";
+
+        for (var i = 0; i < bubbleCount; i++) {
+          const ran = Math.floor(Math.random() * 10);
+          bubVal.push(ran);
+          bubbles += `<div class="bubble">${ran}</div>`;
+        }
+        document.querySelector("#pbtm").innerHTML = bubbles;
+
+        bubbles = document.getElementsByClassName("bubble");
+
+        Array.from(bubbles).forEach((bubble) => {
+          bubble.addEventListener("click", () => {
+            handleGame(bubble.innerHTML);
+          });
+        });
+      };
+
+      const bubbleCount = window.innerWidth < 768 ? (7 * 6) : (13 * 6);
+      let bubVal = [];
+      let hit;
+      let score = 0;
+
+      const runTimer = () => {
+        let timer = 30;
+        var clock = setInterval(() => {
+          if (timer > 0) {
+            if (timer <= 5) {
+              document.getElementById("timer").style.color = "red";
+            }
+            timer--;
+            document.querySelector("#timer").innerHTML = timer;
+          } else {
+            clearInterval(clock);
+            document.getElementById("timer").style.color = "black";
+            displayScore();
+          }
+        }, 1000);
+      };
+
+      const getNewHit = () => {
+        let ran = Math.floor(Math.random() * 1000) % bubbleCount;
+        hit = bubVal[ran];
+        document.querySelector("#hit").innerHTML = hit;
+      };
+
+      const setScore = (val) => {
+        if (val == 1) {
+          score += 10;
+        } else {
+          if (score > 0) {
+            score -= 10;
+          } else {
+            score = 0;
+          }
+        }
+
+        document.querySelector("#score").innerHTML = score;
+      };
+
+      let highscore = 0; // global
+      const displayScore = () => {
+        let sc = document.querySelector("#score").innerHTML;
+        let panel = document.querySelector("#pbtm");
+
+        let msgElement = document.createElement("p");
+
+        if (sc > highscore) {
+          highscore = sc;
+        }
+
+        msgElement.textContent = `Congratulations! You scored : ${sc}, \n Your highscore is ${highscore}`;
+        msgElement.style.fontSize = "20px";
+        msgElement.style.padding = "20px";
+
+        panel.innerHTML = "";
+        panel.appendChild(msgElement);
+
+        let play = makePlay();
+        panel.appendChild(play);
+      };
+
+      const handleGame = (val) => {
+        if (val == hit) {
+          setScore(1);
+          makeBubbles();
+          getNewHit();
+        } else {
+          setScore(0);
+        }
+      };
+
+      const makePlay = () => {
+        let play = document.createElement("button");
+        play.id = "play";
+        play.textContent = "Play";
+        play.addEventListener("click", () => {
+          start();
+        });
+
+        return play;
+      };
+
+      const start = () => {
+        makeBubbles();
+        getNewHit();
+        runTimer();
+      };
+
+      function main() {
+        let panel = document.querySelector("#pbtm");
+        let play = makePlay();
+        panel.appendChild(play);
+      }
+
+      main();
+    </script>
+  </body>
+</html>
